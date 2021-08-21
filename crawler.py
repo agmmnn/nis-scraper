@@ -11,7 +11,7 @@ data_dict = {}
 
 # Given words
 first_word = "ab"
-last_word = "abat"
+last_word = "zürriyet"
 
 # Filenames
 f_output = "output.json"
