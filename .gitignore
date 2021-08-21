@@ -1,0 +1,12 @@
+__pycache__/
+
+.vscode
+_other
+
+build
+dist
+*.spec
+*.manifest
+
+output.json
+wordlist.txt
