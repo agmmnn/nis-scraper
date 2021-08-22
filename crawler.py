@@ -74,6 +74,40 @@ def back_forward():
     gg(nextt_word)
 
 
+# final message
+def final_msg(msg):
+    p_green = "\033[92m"
+    p_blue = "\033[94m"
+    p_endc = "\033[0m"
+
+    print("-------------------------\n")
+    print(p_green + msg + p_endc + "\n")
+    print(
+        p_blue
+        + "İlk kelime: "
+        + p_green
+        + list(data_dict)[0]
+        + p_blue
+        + ", Son kelime: "
+        + p_green
+        + list(data_dict)[-1]
+    )
+    print(p_blue + "Toplam kelime sayısı: " + p_green + str(len(data_dict)) + p_endc)
+    print(p_blue + "Çıktı dosyası: " + p_green + f_output + p_endc)
+    print(p_blue + "Kelime listesi dosyası: " + p_green + f_wordlist + p_endc)
+    print("\a")
+
+
+def export():
+    # export data to .json file
+    with open(f_output, "wb") as f:
+        f.write(orjson.dumps(data_dict))
+
+    # export wordlist to .txt file
+    with open(f_wordlist, "w", encoding="utf-8") as f:
+        f.write("\n".join(list(data_dict)))
+
+
 # Main function gg
 def gg(word):
     word = word
@@ -82,6 +116,9 @@ def gg(word):
     while not done:
         soup = BeautifulSoup(req(word), "html5lib")
         cell = soup.find("tr", {"class": "yaz hghlght"})
+        if cell == None:
+            print("Girilen kelime bulunamadı!")
+            break
         kelime = cell.td["title"]
         tarih = cell.find("div", {"class": "maddetarih"}).text
         eskoken = cell.find_all("div", {"class": "eskoken"})
@@ -128,46 +165,33 @@ def gg(word):
         if kelime == last_word:
             done = True
         else:
+
             if (
-                cell.nextSibling.nextSibling
+                cell.nextSibling.nextSibling != None
                 and cell.nextSibling.nextSibling.nextSibling.nextSibling != None
             ):
+                if (
+                    cell.nextSibling.nextSibling.find("div", {"class": "etymtxt"}).text
+                    == ""
+                ):
+                    word = cell.nextSibling.nextSibling.nextSibling.nextSibling.td[
+                        "title"
+                    ]
+                    continue
                 word = cell.nextSibling.nextSibling.td["title"]
             else:
                 back_forward()
     else:
-        # export data to .json file
-        with open(f_output, "wb") as f:
-            f.write(orjson.dumps(data_dict))
-
-        # export wordlist to .txt file
-        with open(f_wordlist, "w", encoding="utf-8") as f:
-            f.write("\n".join(list(data_dict)))
-
-        # final message
-        p_green = "\033[92m"
-        p_blue = "\033[94m"
-        p_endc = "\033[0m"
-
-        print("-------------------------\n")
-        print(p_green + "Tamamlandı..!" + p_endc)
-        print(
-            p_blue
-            + "İlk kelime: "
-            + p_green
-            + list(data_dict)[0]
-            + p_blue
-            + ", Son kelime: "
-            + p_green
-            + list(data_dict)[-1]
-        )
-        print(
-            p_blue + "Toplam kelime sayısı: " + p_green + str(len(data_dict)) + p_endc
-        )
-        print(p_blue + "Çıktı dosyası: " + p_green + f_output + p_endc)
-        print(p_blue + "Kelime listesi dosyası: " + p_green + f_wordlist + p_endc)
-        print("\a")
+        export()
+        final_msg("Başarıyla tamamlandı...")
         exit()
 
 
-gg(first_word)
+try:
+    gg(first_word)
+except KeyboardInterrupt:
+    export()
+    final_msg("Liste tamamlanamadı!\nKeyboardInterrupt")
+except Exception as e:
+    export()
+    final_msg("Liste tamamlanamadı!\nBeklenmedik bir durum oluştu: " + str(e))
