@@ -10,7 +10,7 @@ import orjson
 data_dict = {}
 
 # Given words
-first_word = "ab"
+first_word = "ralli"
 last_word = "zürriyet"
 
 # Filenames
@@ -40,7 +40,7 @@ def req(word):
     return r.content
 
 
-# Sometimes distortions occur when going sequentially in the table. bkz: add -> "adem"
+# Sometimes distortions occur when going sequentially in the table. e.g.: add -> "adem"
 def back_forward():
     try:
         soup = BeautifulSoup(req(list(data_dict)[-2]), "html5lib")
@@ -108,60 +108,74 @@ def export():
         f.write("\n".join(list(data_dict)))
 
 
+# scrape the cell
+def scrape_cell(cell):
+    cell = cell
+    kelime = cell.td["title"]
+    tarih = cell.find("div", {"class": "maddetarih"}).text
+    eskoken = cell.find_all("div", {"class": "eskoken"})
+    baslik = (
+        tarihce
+    ) = koken = daha_fazla = ek_aciklama = benzer_sozcukler = maddeye_gonderenler = ""
+    baslik = cell.td.a.text
+
+    for i in eskoken:
+        if i.div != None:
+            title = i.div.text
+            if "Tarihçe" in title:
+                tarihce = str(i.p)
+            elif "Köken" in title:
+                koken = str(i.p)
+            elif "Ek açıklama" in title:
+                ek_aciklama = str(i.p)
+            elif "Benzer sözcükler" in title:
+                benzer_sozcukler = list(i.p.text.split(", "))
+            elif "Bu maddeye gönderenler" in title:
+                maddeye_gonderenler = list(i.p.text.strip().split(", "))
+        elif "Daha fazla bilgi" in i.p.text:
+            k = []
+            a = i.p.find_all("a")
+            for i in a:
+                k.append(i.text)
+            daha_fazla = k
+
+    data = {
+        "baslik": baslik,
+        "tarihce": tarihce,
+        "koken": koken,
+        "daha_fazla": daha_fazla,
+        "ek_aciklama": ek_aciklama,
+        "benzer_sozcukler": benzer_sozcukler,
+        "maddeye_gonderenler": maddeye_gonderenler,
+        "tarih": tarih,
+    }
+    data_dict[kelime] = data
+    print(kelime)
+
+
 # Main function gg
 def gg(word):
     word = word
     done = False
 
     while not done:
-        soup = BeautifulSoup(req(word), "html5lib")
+        content = req(word)
+        soup = BeautifulSoup(content, "html5lib")
         cell = soup.find("tr", {"class": "yaz hghlght"})
-        if cell == None:
+        all_cells = soup.find_all("tr", {"class": "yaz hghlght"})
+
+        # Wrong word
+        if len(all_cells) == 0:
             print("Girilen kelime bulunamadı!")
             break
+        # Double word e.g.: ram,RAM
+        elif len(all_cells) > 1:
+            for i in all_cells:
+                scrape_cell(i)
+        else:
+            scrape_cell(cell)
+
         kelime = cell.td["title"]
-        tarih = cell.find("div", {"class": "maddetarih"}).text
-        eskoken = cell.find_all("div", {"class": "eskoken"})
-        baslik = (
-            tarihce
-        ) = (
-            koken
-        ) = daha_fazla = ek_aciklama = benzer_sozcukler = maddeye_gonderenler = ""
-        baslik = cell.td.a.text
-
-        for i in eskoken:
-            if i.div != None:
-                title = i.div.text
-                if "Tarihçe" in title:
-                    tarihce = str(i.p)
-                elif "Köken" in title:
-                    koken = str(i.p)
-                elif "Ek açıklama" in title:
-                    ek_aciklama = str(i.p)
-                elif "Benzer sözcükler" in title:
-                    benzer_sozcukler = list(i.p.text.split(", "))
-                elif "Bu maddeye gönderenler" in title:
-                    maddeye_gonderenler = list(i.p.text.strip().split(", "))
-            elif "Daha fazla bilgi" in i.p.text:
-                k = []
-                a = i.p.find_all("a")
-                for i in a:
-                    k.append(i.text)
-                daha_fazla = k
-
-        data = {
-            "baslik": baslik,
-            "tarihce": tarihce,
-            "koken": koken,
-            "daha_fazla": daha_fazla,
-            "ek_aciklama": ek_aciklama,
-            "benzer_sozcukler": benzer_sozcukler,
-            "maddeye_gonderenler": maddeye_gonderenler,
-            "tarih": tarih,
-        }
-        data_dict[kelime] = data
-        print(kelime)
-
         if kelime == last_word:
             done = True
         else:
