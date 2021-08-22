@@ -10,7 +10,7 @@ import orjson
 data_dict = {}
 
 # Given words
-first_word = "ralli"
+first_word = "ab"
 last_word = "zürriyet"
 
 # Filenames
@@ -81,7 +81,7 @@ def final_msg(msg):
     p_endc = "\033[0m"
 
     print("-------------------------\n")
-    print(p_green + msg + p_endc + "\n")
+    print(p_blue + msg + p_endc + "\n")
     print(
         p_blue
         + "İlk kelime: "
