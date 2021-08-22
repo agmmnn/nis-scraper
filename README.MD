@@ -16,10 +16,12 @@ _Disclaimer: For research purposes, this repository does not contain any dataset
 
 _Note: Be aware when this code was published. if the site will be updated in the future this code may not work properly._
 
-## output.json Structure
+## Structures of exported files
+
+### output.json
 
 ```json
-"word": {
+"word1": {
     "baslik": "",
     "tarihce": "",
     "koken": "",
@@ -28,13 +30,17 @@ _Note: Be aware when this code was published. if the site will be updated in the
     "benzer_sozcukler": [""],
     "maddeye_gonderenler": [""],
     "tarih": ""
-}, ...
+},
+"word2": {...
 ```
 
-<!-- ## TODO
+### wordlist.txt
 
--   [ ] Parameters.
--   [ ] Safely stop the process. -->
+```
+word1
+word2
+...
+```
 
 ## License
 
