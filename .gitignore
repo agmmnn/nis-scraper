@@ -7,6 +7,7 @@ build
 dist
 *.spec
 *.manifest
+*.egg-info
 
 output.json
 wordlist.txt

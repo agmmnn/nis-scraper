@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# import argparse
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util import Retry
@@ -7,6 +8,7 @@ from urllib.parse import quote
 from bs4 import BeautifulSoup
 import orjson
 
+# data dictionary
 data_dict = {}
 
 # Given words
@@ -154,8 +156,11 @@ def scrape_cell(cell):
 
 
 # Main function gg
-def gg(word):
-    word = word
+def gg(first, last):
+    word = first
+    lastw = last
+    print(word + " ➔ " + lastw + "\n")
+
     done = False
 
     while not done:
@@ -176,7 +181,7 @@ def gg(word):
             scrape_cell(cell)
 
         kelime = cell.td["title"]
-        if kelime == last_word:
+        if kelime == lastw:
             done = True
         else:
 
@@ -201,11 +206,12 @@ def gg(word):
         exit()
 
 
-try:
-    gg(first_word)
-except KeyboardInterrupt:
-    export()
-    final_msg("Liste tamamlanamadı!\nKeyboardInterrupt")
-except Exception as e:
-    export()
-    final_msg("Liste tamamlanamadı!\nBeklenmedik bir durum oluştu: " + str(e))
+def main(first=first_word, last=last_word):
+    try:
+        gg(first, last)
+    except KeyboardInterrupt:
+        export()
+        final_msg("Liste tamamlanamadı!\nKeyboardInterrupt")
+    except Exception as e:
+        export()
+        final_msg("Liste tamamlanamadı!\nBeklenmedik bir durum oluştu: " + str(e))
