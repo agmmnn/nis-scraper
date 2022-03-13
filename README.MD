@@ -1,8 +1,13 @@
+-------
+
+_The website has been updated and dynamic pages are not working with 'requests', for now I don't want to use 'selenium'. You can download an outdated snapshot of the site's database from here:_
+https://www.kaggle.com/agmmnn/nisanyansozlukcom-database-220821 
+
+-----------
+
 ![screenshot](https://raw.githubusercontent.com/agmmnn/nisanyan_crawler/master/ss.png)
 
 A Python script to crawl the online Turkish etymological dictionary, [nisanyansozluk.com](https://www.nisanyansozluk.com/).
-
-_Disclaimer: For research purposes, this repository does not contain any dataset from the mentioned website._
 
 ## How to Use
 
