@@ -1,5 +1,3 @@
-A Python Scrapy script to crawl the online Turkish etymological dictionary, [nisanyansozluk.com](https://www.nisanyansozluk.com/).
-
 ## How to Use
 
 ```
